@@ -52,3 +52,7 @@ services:
     image: memcached:latest
     ports:
       - "127.0.0.1:6379:6379"
+  memcached:
+    image: nodejs:latest
+    ports:
+      - "127.0.0.1:49160:8080"
