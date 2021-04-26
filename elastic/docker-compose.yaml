@@ -7,13 +7,19 @@ services:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms2g -Xmx2g
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - /mnt/esdata:/usr/share/elasticsearch/data
+    deploy:
+      mode: replicated
+      replicas: 1
   kibana:
     image: kibana:7.12.0
     depends_on:
       - elasticsearch
     ports:
       - "5601:5601"
+    deploy:
+      mode: replicated
+      replicas: 1
   logstash:
     image: logstash:7.12.0
     ports:
@@ -21,11 +27,8 @@ services:
     depends_on:
       - elasticsearch
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 1
     volumes:
-      - logstash-pipeline:/usr/share/logstash/pipeline/
-volumes:
-  esdata:
-    driver: local
-  logstash-pipeline:
-    driver: local
+      - /mnt/logstash-pipeline:/usr/share/logstash/pipeline/
+
