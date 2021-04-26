@@ -1,0 +1,86 @@
+version: '3.1'
+#
+services:
+#    
+  db:
+    image: fametec/bacula-catalog:9.6.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: bacula
+      POSTGRES_USER: bacula
+      POSTGRES_DB: bacula
+    # volumes:
+    #   - pgdata:/var/lib/postgresql/data:rw
+    ports:
+      - 5432:5432
+#
+  bacula-dir:
+    image: fametec/bacula-director:9.6.5
+    restart: unless-stopped
+    volumes:
+      - ./etc:/opt/bacula/etc:ro
+    depends_on: 
+      - db      
+    ports:
+      - 9101:9101
+#
+  bacula-sd:
+    image: fametec/bacula-storage:9.6.5
+    restart: unless-stopped
+    depends_on:
+      - bacula-dir
+      - db
+    volumes:
+      - ./etc:/opt/bacula/etc:ro
+    ports:
+      - 9103:9103
+#
+  bacula-fd:
+    image: fametec/bacula-client:9.6.5
+    restart: unless-stopped
+    depends_on:
+      - bacula-sd
+      - bacula-dir
+      - db
+    volumes:
+      - ./etc:/opt/bacula/etc:ro
+    ports:
+      - 9102:9102
+#
+#  baculum:
+#    image: fametec/baculum:9.6.5
+#    restart: unless-stopped
+#    depends_on: 
+#      - db
+#      - bacula-dir
+#    volumes:
+#      - ./etc:/opt/bacula/etc:ro
+#      - ./etc/baculum:/opt/bacula/etc/baculum:rw
+#    ports:
+#      - 9095:9095
+#      - 9096:9096
+#
+#  gmail:
+#    image: fametec/postfix:gmail
+#    restart: unless-stopped
+#    depends_on:
+#      - bacula-dir
+#    # ports:
+#    #  - 30025:25
+#    environment:
+#      GMAIL_USER: xxxxxxxx
+#      GMAIL_PASS: xxxxxxxx
+#
+#  smtp2tg:
+#    image: b3vis/docker-smtp2tg
+#    restart: unless-stopped
+#    volumes:
+#      - ./etc/smtp2tg.toml:/config/smtp2tg.toml:ro
+#    #    ports:
+#    #  - "31025:25"
+#    depends_on:
+#      - bacula-dir
+#
+# 
+#volumes: 
+#  pgdata:
