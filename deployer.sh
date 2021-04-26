@@ -3,7 +3,7 @@ sudo cp -r ./config/ /mnt/
 sudo cp -r ./www/ /mnt/
 sudo cp -r ./logs /mnt/
 sudo cp -r ./data/ /mnt/
-sudo cp -r ./bacula/etc/
+sudo cp -r ./bacula/etc/ /mnt/
 sudo mkdir -p /mnt/esdata || true
 sudo mkdir -p /mnt/logstash-pipeline ||true
 
