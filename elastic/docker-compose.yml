@@ -11,9 +11,13 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    ELASTIC_PASSWORD: yourstrongpasswordhere
     ports:
       - "127.0.0.1:9200:9200"
       - "127.0.0.1:9300:9300"
+    configs:
+      - source: elastic_conf
+        target: /usr/share/elasticsearch/config/elastic.yml
   kibana:
     image: kibana:7.12.0
     depends_on:
@@ -23,6 +27,9 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    configs:
+      - source: kibana_conf
+        target: /usr/share/kibana/config/kibana.yml
   logstash:
     image: logstash:7.12.0
     ports:
@@ -35,6 +42,8 @@ services:
     configs:
       - source: logstash_config
         target: /usr/share/logstash/pipeline/logstash.conf
+      - source: logstash_yml
+        target: usr/share/logstash/config/logstash.yml
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.12.0
     user: root
@@ -51,6 +60,12 @@ configs:
     file: ./filebeat.yml
   logstash_config:
     file: ./logstash.conf
+  elastic_conf:
+    file: ./elasticsearch.yml
+  logstash_yml:
+    file: ./logstash.yml
+  kibana_conf:
+    file: ./kibana.yml
 
 
 
