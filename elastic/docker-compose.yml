@@ -29,16 +29,25 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-    volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    configs:
+      - source: logstash_config
+      target: /usr/share/logstash/pipeline/
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.12.0
     user: root
     volumes:
       - /var/run/docker.sock:/host_docker/docker.sock
       - /var/lib/docker:/host_docker/var/lib/docker
-      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+    configs:
+      - source: filebeat_config
+      target: /usr/share/filebeat/
     command: [ "--strict.perms=false" ]
+
+configs:
+  filebeat_config:
+    file: ./filebeat.yml
+  logstash_config:
+    file: ./logstash.conf
 
 
 
