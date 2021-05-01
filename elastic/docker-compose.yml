@@ -31,7 +31,7 @@ services:
       replicas: 1
     configs:
       - source: logstash_config
-      target: /usr/share/logstash/pipeline/
+        target: /usr/share/logstash/pipeline/
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.12.0
     user: root
@@ -40,7 +40,7 @@ services:
       - /var/lib/docker:/host_docker/var/lib/docker
     configs:
       - source: filebeat_config
-      target: /usr/share/filebeat/
+        target: /usr/share/filebeat/
     command: [ "--strict.perms=false" ]
 
 configs:
