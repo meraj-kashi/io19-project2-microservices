@@ -6,12 +6,12 @@ services:
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD: yourstrongpasswordhere
     volumes:
       - /mnt/esdata:/usr/share/elasticsearch/data
     deploy:
       mode: replicated
       replicas: 1
-    ELASTIC_PASSWORD: yourstrongpasswordhere
     ports:
       - "127.0.0.1:9200:9200"
       - "127.0.0.1:9300:9300"
