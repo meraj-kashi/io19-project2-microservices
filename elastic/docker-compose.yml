@@ -11,7 +11,7 @@ services:
       - /mnt/esdata:/usr/share/elasticsearch/data
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
     ports:
       - "127.0.0.1:9200:9200"
       - "127.0.0.1:9300:9300"
@@ -26,7 +26,7 @@ services:
       - "127.0.0.1:5601:5601"
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
     configs:
       - source: kibana_conf
         target: /usr/share/kibana/config/kibana.yml
@@ -38,7 +38,7 @@ services:
       - elasticsearch
     deploy:
       mode: replicated
-      replicas: 3
+      replicas: 1
     configs:
       - source: logstash_config
         target: /usr/share/logstash/pipeline/logstash.conf
