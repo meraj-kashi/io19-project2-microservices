@@ -6,7 +6,7 @@ services:
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD: yourstrongpasswordhere
+      - ELASTIC_PASSWORD=yourstrongpasswordhere
     volumes:
       - /mnt/esdata:/usr/share/elasticsearch/data
     deploy:
