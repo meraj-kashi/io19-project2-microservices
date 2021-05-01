@@ -23,12 +23,22 @@ services:
   logstash:
     image: logstash:7.12.0
     ports:
-      - "127.0.0.1:12201:12201/udp"
+      - "127.0.0.1:5044:5044"
     depends_on:
       - elasticsearch
     deploy:
       mode: replicated
       replicas: 1
     volumes:
-      - /mnt/logstash-pipeline:/usr/share/logstash/pipeline/
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.12.0
+    user: root
+    volumes:
+      - /var/run/docker.sock:/host_docker/docker.sock
+      - /var/lib/docker:/host_docker/var/lib/docker
+      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml
+    command: [ "--strict.perms=false" ]
+
+
 
