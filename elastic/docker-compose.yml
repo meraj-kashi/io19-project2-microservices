@@ -2,11 +2,12 @@ version: '3.3'
 
 services:
   elasticsearch:
+    container_name: elasticsearch
     image: elasticsearch:7.12.0
     environment:
       - discovery.type=single-node
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=yourstrongpasswordhere
+      - ELASTIC_PASSWORD=changeme
     volumes:
       - /mnt/esdata:/usr/share/elasticsearch/data
     deploy:
@@ -27,6 +28,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    links:
+      - elasticsearch:elasticsearch
     configs:
       - source: kibana_conf
         target: /usr/share/kibana/config/kibana.yml
@@ -39,6 +42,8 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    links:
+      - elasticsearch:elasticsearch
     configs:
       - source: logstash_config
         target: /usr/share/logstash/pipeline/logstash.conf
@@ -50,6 +55,7 @@ services:
     volumes:
       - /var/run/docker.sock:/host_docker/docker.sock
       - /var/lib/docker:/host_docker/var/lib/docker
+    links: logstash:logstash
     configs:
       - source: filebeat_config
         target: /usr/share/filebeat/filebeat.yml
