@@ -83,7 +83,3 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-    logging:
-      driver: gelf
-      options:
-        gelf-address: "udp://localhost:12201"

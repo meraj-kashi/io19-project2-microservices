@@ -16,7 +16,7 @@ filebeat.config.modules:
   path: ${path.config}/modules.d/*.yml
   reload.enabled: false
 output.logstash:
-  hosts: ["127.0.0.1:5044"]
+  hosts: ["logstash:5044"]
 
 log files:
 logging.level: error
