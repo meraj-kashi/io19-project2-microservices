@@ -1,34 +1,84 @@
-version: '3'
+version: '3.5'
 
 services:
   elasticsearch:
     image: elasticsearch:7.12.0
+    hostname: elasticsearch
+    networks:
+      - projectx
     environment:
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
-    volumes:
-      - /mnt/esdata:/usr/share/elasticsearch/data
+      - ELASTIC_PASSWORD=changeme
     deploy:
       mode: replicated
       replicas: 1
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    configs:
+      - source: elastic_conf
+        target: /usr/share/elasticsearch/config/elastic.yml
   kibana:
     image: kibana:7.12.0
+    hostname: kibana
+    networks:
+      - projectx
     depends_on:
       - elasticsearch
     ports:
-      - "127.0.0.1:5601:5601"
+      - "5601:5601"
     deploy:
       mode: replicated
       replicas: 1
+    configs:
+      - source: kibana_conf
+        target: /usr/share/kibana/config/kibana.yml
   logstash:
     image: logstash:7.12.0
+    hostname: logstash
+    networks:
+      - projectx
     ports:
-      - "127.0.0.1:12201:12201/udp"
+      - "5044:5044"
+      - "12201:12201/udp"
     depends_on:
       - elasticsearch
     deploy:
       mode: replicated
       replicas: 1
+    configs:
+      - source: logstash_config
+        target: /usr/share/logstash/pipeline/logstash.conf
+      - source: logstash_yml
+        target: /usr/share/logstash/config/logstash.yml
+    environment:
+      - LS_JAVA_OPTS=-Xmx256m -Xms256m
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.12.0
+    hostname: filebeat
+    networks:
+      - projectx
+    user: root
     volumes:
-      - /mnt/logstash-pipeline:/usr/share/logstash/pipeline/
+      - /var/lib/docker/containers:/usr/share/dockerlogs/data
+    configs:
+      - source: filebeat_config
+        target: /usr/share/filebeat/filebeat.yml
+    command: [ "--strict.perms=false" ]
 
+configs:
+  filebeat_config:
+    file: ./filebeat.yml
+  logstash_config:
+    file: ./logstash.conf
+  elastic_conf:
+    file: ./elasticsearch.yml
+  logstash_yml:
+    file: ./logstash.yml
+  kibana_conf:
+    file: ./kibana.yml
+networks:
+  projectx:
+    external:
+      name:  projectx_default
